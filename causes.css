@@ -25,6 +25,7 @@
 }
 #causes .reveal .slides {
   text-align: left;
+  width: 1000px;
 }
 #causes .reveal .slides li {
   margin-bottom: 12px;

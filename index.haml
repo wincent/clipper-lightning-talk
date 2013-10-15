@@ -2,8 +2,8 @@
 %html{:lang => "en"}
   %head
     %meta{:charset => "utf-8"}/
-    %title Presentation title
-    %meta{:content => "Causes Engineering", :name => "author"}/
+    %title Clipper
+    %meta{:content => "Greg Hurrell", :name => "author"}/
     %link{:href => "http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic", :rel => "stylesheet", :type => "text/css"}/
     %link{:href => "reveal/css/reset.css", :rel => "stylesheet"}/
     %link{:href => "reveal/css/main.css", :rel => "stylesheet"}/
@@ -19,28 +19,95 @@
       .slides
 
         %section
-          %h1 Presentation title
+          %h1 Clipper
           %br
           %h5 presented by
-          %h4 Presenter
+          %h4 Greg Hurrell
           %img.logo{:src => 'assets/causes_logo.png'}
 
 
         %section
-          %h2 Slide title
+          %h2 The problem
           %ul
-            %li.fragment
-              A bullet point
-            %li.fragment
-              Another bullet point
-              %pre.fragment
-                %code.language-ruby{:contenteditable => ""}
-                  :preserve
-                    # this is Ruby code
-                    &lt;%= @cause.name %&gt;
-            %li.fragment
-              Another bullet point
+            %li
+              tmux knows nothing about your Mac's clipboard
+            %li
+              %code pbcopy
+              won't work inside tmux
+            %li
+              Vim inside tmux can't write to your Mac's clipboard
+            %li
+              Vim inside tmux on another host knows even less about your Mac's Clipboard
 
+        %section
+          %h2 The solution
+          %pre
+            %code.language-bash{:contenteditable => ""}
+              :preserve
+                brew install clipper
+
+        %section
+          %h2 Demo
+
+        %section
+          %h2 Teaching tmux to talk to Clipper
+          %pre
+            %code.language-ruby{:contenteditable => ""}
+              :preserve
+                # For your ~/.tmux.conf:
+
+                # tmux &lt; 1.8: bind &lt;prefix&gt;-y to forward to Clipper
+                bind-key y run-shell "tmux save-buffer - | nc localhost 8377"
+
+                # tmux &gt;= 1.8: bind "Enter" in copy mode to both copy and
+                # forward to Clipper
+                bind-key -t vi-copy Enter copy-pipe "nc localhost 8377"
+
+        %section
+          %h2 Teaching Vim to talk to Clipper
+          %pre
+            %code.language-ruby{:contenteditable => ""}
+              :preserve
+                # For your ~/.vimrc:
+
+                # Bind &lt;leader&gt;y to forward last-yanked text to Clipper
+                nnoremap &lt;leader&gt;y :call system('nc localhost 8377', @0)&lt;CR&gt;
+
+        %section
+          %h2 Teaching Bash/Zsh to talk to Clipper
+          %pre
+            %code.language-ruby{:contenteditable => ""}
+              :preserve
+                # For your ~/.bash_profile or ~/.zshrc:
+
+                # Pipe anything into `clip` to forward it to Clipper
+                alias clip="nc localhost 8377"
+
+        %section
+          %h2 Teaching SSH to work with Clipper
+          %pre
+            %code.language-ruby{:contenteditable => ""}
+              :preserve
+                # For your ~/.ssh/config:
+
+                # Forward Clipper connection to remote host
+                Host host.example.org
+                  RemoteForward 8377 localhost:8377
+
+        %section
+          %h2 What about pasting?
+          %ul
+            %li
+              Clipper is effectively a uni-directional channel
+            %li
+              Copies but doesn't paste
+            %li
+              For pasting, we rely on Xterm's "bracketed paste mode"
+            %li
+              A subject for another talk, unless you want to go through my dotfiles
+            %li
+              %a{ :href => 'https://github.com/wincent/wincent' }
+                https://github.com/wincent/wincent
       /
         required for correct operation of reveal.js,
         even if we don't want controls
