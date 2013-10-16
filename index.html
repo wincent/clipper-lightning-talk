@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8' />
+    <title>Clipper</title>
+    <meta content='Greg Hurrell' name='author' />
+    <link href='http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic' rel='stylesheet' type='text/css' />
+    <link href='reveal/css/reset.css' rel='stylesheet' />
+    <link href='reveal/css/main.css' rel='stylesheet' />
+    <link href='highlight/src/styles/solarized_dark.css' rel='stylesheet' />
+    <link href='causes.css' rel='stylesheet' />
+    <!-- overrides for default reveal styles -->
+    <style type='text/css'>
+      /*<![CDATA[*/
+        .reveal pre {
+          font-size: 24px;
+        }
+      /*]]>*/
+    </style>
+  </head>
+  <body id='causes'>
+    <div class='reveal'>
+      <div class='slides'>
+        <section>
+          <h1>Clipper</h1>
+          <br />
+          <h5>presented by</h5>
+          <h4>Greg Hurrell</h4>
+          <img class='logo' src='assets/causes_logo.png' />
+        </section>
+        <section>
+          <h2>The problem</h2>
+          <ul>
+            <li>
+              tmux knows nothing about your Mac's clipboard
+            </li>
+            <li>
+              <code>pbcopy</code>
+              won't work inside tmux
+            </li>
+            <li>
+              Vim inside tmux can't write to your Mac's clipboard
+            </li>
+            <li>
+              Vim inside tmux on another host knows even less about your Mac's Clipboard
+            </li>
+          </ul>
+        </section>
+        <section>
+          <h2>The solution</h2>
+          <pre><code class='language-bash' contenteditable=''>brew install clipper&#x000A;</code></pre>
+        </section>
+        <section>
+          <h2>Demo</h2>
+        </section>
+        <section>
+          <img src='assets/diagram.gif' style='width: 100%; margin-top: -100px' />
+        </section>
+        <section>
+          <h2>Teaching tmux to talk to Clipper</h2>
+          <pre><code class='language-ruby' contenteditable=''># For your ~/.tmux.conf:&#x000A;&#x000A;# tmux &lt; 1.8: bind &lt;prefix&gt;-y to forward to Clipper&#x000A;bind-key y run-shell "tmux save-buffer - | nc localhost 8377"&#x000A;&#x000A;# tmux &gt;= 1.8: bind "Enter" in copy mode to both copy and&#x000A;# forward to Clipper&#x000A;bind-key -t vi-copy Enter copy-pipe "nc localhost 8377"&#x000A;</code></pre>
+        </section>
+        <section>
+          <h2>Teaching Vim to talk to Clipper</h2>
+          <pre><code class='language-ruby' contenteditable=''># For your ~/.vimrc:&#x000A;&#x000A;# Bind &lt;leader&gt;y to forward last-yanked text to Clipper&#x000A;nnoremap &lt;leader&gt;y :call system('nc localhost 8377', @0)&lt;CR&gt;&#x000A;</code></pre>
+        </section>
+        <section>
+          <h2>Teaching Bash/Zsh to talk to Clipper</h2>
+          <pre><code class='language-ruby' contenteditable=''># For your ~/.bash_profile or ~/.zshrc:&#x000A;&#x000A;# Pipe anything into `clip` to forward it to Clipper&#x000A;alias clip="nc localhost 8377"&#x000A;</code></pre>
+        </section>
+        <section>
+          <h2>Teaching SSH to work with Clipper</h2>
+          <pre><code class='language-ruby' contenteditable=''># For your ~/.ssh/config:&#x000A;&#x000A;# Forward Clipper connection to remote host&#x000A;Host host.example.org&#x000A;  RemoteForward 8377 localhost:8377&#x000A;</code></pre>
+        </section>
+        <section>
+          <h2>What about pasting?</h2>
+          <ul>
+            <li>
+              Clipper is effectively a uni-directional channel
+            </li>
+            <li>
+              Copies but doesn't paste
+            </li>
+            <li>
+              For pasting, we rely on Xterm's "bracketed paste mode"
+            </li>
+            <li>
+              A subject for another talk, unless you want to go through my dotfiles
+            </li>
+            <li>
+              <a href='https://github.com/wincent/wincent'>
+                https://github.com/wincent/wincent
+              </a>
+            </li>
+          </ul>
+        </section>
+        <section>
+          <h2>Metadata</h2>
+          <ul>
+            <li>
+              Clipper:
+              <a href='https://github.com/wincent/clipper'>
+                https://github.com/wincent/clipper
+              </a>
+            </li>
+            <li>
+              This talk:
+              <a href='https://wincent.github.io/clipper-lightning-talk'>
+                https://wincent.github.io/clipper-lightning-talk
+              </a>
+            </li>
+            <li>
+              Other stuff:
+              <a href='https://github.com/wincent'>
+                https://github.com/wincent
+              </a>
+            </li>
+          </ul>
+        </section>
+      </div>
+      <!--
+        required for correct operation of reveal.js,
+        even if we don't want controls
+      -->
+      <aside class='controls'>
+        <a class='left' href='#'>&#x25c4;</a>
+        <a class='right' href='#'>&#x25ba;</a>
+        <a class='up' href='#'>&#x25b2;</a>
+        <a class='down' href='#'>&#x25bc;</a>
+      </aside>
+    </div>
+    <script src='reveal/js/reveal.min.js'></script>
+    <script src='highlight/build/highlight.pack.js'></script>
+    <script type='text/javascript'>
+      //<![CDATA[
+        Reveal.initialize({
+          controls: false,
+          progress: false,
+          history: true,
+          mouseWheel: false,
+          rollingLinks: false,
+        });
+        hljs.initHighlightingOnLoad();
+      //]]>
+    </script>
+  </body>
+</html>
