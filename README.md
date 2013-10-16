@@ -1,18 +1,12 @@
-Basic starting point for quick-and-dirty technical presentations.
+This is a lightning talk I gave on Clipper.
 
-## Includes:
-
-  - `reveal.js`: JS slideshow library
-  - `highlight.js`: JS syntax highlighting library, with themes
-
-## Usage:
-
-1. Make sure the prerequisites are in place
-
-        git submodule update --init
-        bundle
-
-1. Edit the `index.haml` file to taste
-1. Build
-
-        bundle exec rake
+- slides in HTML format:
+  http://wincent.github.io/clipper-lightning-talk
+- Clipper:
+  https://github.com/wincent/clipper
+- me:
+  win@wincent.com
+- where I work:
+  https://www.causes.com/
+- interested in working with us?:
+  https://www.causes.com/jobs
