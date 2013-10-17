@@ -5,6 +5,10 @@
   font-size: 33px;
 }
 
+#causes a {
+  color: #15b5d2;
+}
+
 #causes .reveal {
   background-size: 100% 10px;
   background: url(assets/causes-header.png);
